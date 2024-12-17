@@ -1,4 +1,4 @@
-import pickle  # For saving and loading objects
+import pickle  
 import tkinter as tk
 
 
@@ -187,23 +187,20 @@ class Order:
             print(f"Total: ${self.total:.2f}")
 
     def save_order(self, file_path="order.pkl"):
-        """Save the current order using pickle."""
         if not self.items:
             print("Your order is empty! Nothing to save.")
             return
         try:
             with open(file_path, "wb") as file:
-                pickle.dump(self, file)  # Save the entire order object
+                pickle.dump(self, file)
             print(f"Order saved to {file_path}!")
         except Exception as e:
             print(f"Failed to save the order: {e}")
 
-    @staticmethod
     def load_order(file_path="order.pkl"):
-        """Load an order from a pickle file."""
         try:
             with open(file_path, "rb") as file:
-                return pickle.load(file)  # Load the entire order object
+                return pickle.load(file)
         except FileNotFoundError:
             print(f"No saved order found at {file_path}.")
         except Exception as e:
@@ -235,7 +232,6 @@ class Order:
         close_button.pack(pady=10)
         root.mainloop()
 
-        # Clear the order after the receipt is printed
         self.items = []
         self.total = 0.0
         print("Your order has been cleared after printing the receipt.")
@@ -288,7 +284,7 @@ def main():
             order.view_order()
 
         elif choice == "5":
-            file_path = input("Enter file path to save the order (default: 'order.pkl'): ") or "order.pkl"
+            file_path = input("Enter file name to save the order (default: 'order.pkl'): ") or "order.pkl"
             order.save_order(file_path)
 
         elif choice == "6":
