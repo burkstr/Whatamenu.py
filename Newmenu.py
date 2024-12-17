@@ -1,4 +1,4 @@
-import pickle  
+import pickle
 import tkinter as tk
 
 
@@ -12,54 +12,35 @@ class MenuItem:
 
 
 class Meal(MenuItem):
-    def __init__(self, number, name, price, description, is_combo=True):
+    def __init__(self, number, name, price, calories, description, is_combo=True):
         super().__init__(name, price)
         self.number = number
         self.description = description
         self.is_combo = is_combo
         self.size = "medium"
-
-    def upgrade_size(self, size):
-        size_price_mapping = {"small": -0.50, "medium": 0.00, "large": 0.70}
-        if size in size_price_mapping:
-            self.price += size_price_mapping[size] - size_price_mapping[self.size]
-            self.size = size
+        self.calory = calories
 
     def __str__(self):
         combo_text = "Combo" if self.is_combo else "Single"
         return (f"#{self.number} {self.name} ({combo_text}) - {self.size.capitalize()} "
-                f"- ${self.price:.2f}\n    {self.description}")
+                f"- ${self.price:.2f} ({self.calory} Calories)\n    {self.description}")
 
 
 class Burger(MenuItem):
-    def __init__(self, name, price, patty_count=1, has_cheese=False):
+    def __init__(self, name, price, calories, patty_count=1):
         super().__init__(name, price)
         self.patty_count = patty_count
-        self.has_cheese = has_cheese
+        self.calory = calories
 
-    def add_patty(self):
-        self.patty_count += 1
-        self.price += 1.50
-
-    def add_cheese(self):
-        if not self.has_cheese:
-            self.has_cheese = True
-            self.price += 0.50
 
     def __str__(self):
-        cheese_text = "with Cheese" if self.has_cheese else ""
-        return f"{self.name} {cheese_text} - ${self.price:.2f} ({self.patty_count} Patties)"
-
+        return f"{self.name} - {self.patty_count} patty - {self.price:.2f} ({self.calory} Calories)"
 
 class Side(MenuItem):
     def __init__(self, name, price, calories, portion_count=1):
         super().__init__(name, price)
         self.calories = calories
         self.portion_count = portion_count
-
-    def add_portion(self):
-        self.portion_count += 1
-        self.price += 1.00
 
     def __str__(self):
         portion_text = f"{self.portion_count} Portion{'s' if self.portion_count > 1 else ''}"
@@ -87,11 +68,6 @@ class Salad(MenuItem):
         self.calories = calories
         self.serving_count = serving_count
 
-    def add_serving(self):
-        self.serving_count += 1
-        self.price += 2.00
-        self.calories += 100
-
     def __str__(self):
         serving_text = f"{self.serving_count} Serving{'s' if self.serving_count > 1 else ''}"
         return f"{self.name} - ${self.price:.2f} ({self.calories} Cal per serving, {serving_text})"
@@ -103,21 +79,21 @@ class Shake(MenuItem):
         self.calories = calories
 
     def __str__(self):
-        return f"{self.name} - ${self.price:.2f} ({self.calories} Cal)"
+        return f"{self.name} - ${self.price:.2f} ({self.calories} Calories)"
 
 
 class WhataburgerMenu:
     def __init__(self):
         self.meals = [
-            Meal(1, "Whataburger", 9.59, "Classic Whataburger with fries and drink"),
-            Meal(2, "Double Meat Whataburger", 10.79, "Two beef patties, fries, and drink"),
-            Meal(3, "Triple Meat Whataburger", 12.29, "Three beef patties, fries, and drink"),
-            Meal(4, "Jalapeño & Cheese Whataburger", 10.19, "Whataburger with jalapeños, cheese, fries, and drink"),
+            Meal(1, "Whataburger Meal", 9.59,  860,"Classic Whataburger with fries and drink"),
+            Meal(2, "Double Meat Whataburger Meal", 10.79, 1000, "Two beef patties, fries, and drink"),
+            Meal(3, "Triple Meat Whataburger Meal", 12.29, 1340, "Three beef patties, fries, and drink"),
+            Meal(4, "Jalapeño & Cheese Whataburger Meal", 10.19, 950, "Whataburger with jalapeños, cheese, fries, and drink"),
         ]
         self.burgers = [
-            Burger("Whataburger", 5.99, patty_count=1),
-            Burger("Double Meat Whataburger", 7.19, patty_count=2),
-            Burger("Triple Meat Whataburger", 8.69, patty_count=3),
+            Burger("Whataburger", 5.99, 590, patty_count=1),
+            Burger("Double Meat Whataburger", 7.19, 830, patty_count=2),
+            Burger("Triple Meat Whataburger", 8.69, 1070, patty_count=3),
         ]
         self.sides = [
             Side("French Fries", 2.59, 270),
@@ -129,7 +105,11 @@ class WhataburgerMenu:
             Dessert("Chocolate Chip Cookie", 1.89, 330),
             Dessert("Cinnamon Roll", 2.99, 580),
         ]
-        self.salads = [Salad("Apple & Cranberry Chicken Salad", 8.99, 390)]
+        self.salads = [
+            Salad("Apple & Cranberry Chicken Salad", 8.99, 390),
+            Salad("Apple Salad", 8.99, 390)
+
+        ]
         self.shakes = [
             Shake("Chocolate Shake", 3.99, 500),
             Shake("Vanilla Shake", 3.99, 450),
@@ -284,11 +264,11 @@ def main():
             order.view_order()
 
         elif choice == "5":
-            file_path = input("Enter file name to save the order (default: 'order.pkl'): ") or "order.pkl"
+            file_path = input("Enter file name to save the order: ")
             order.save_order(file_path)
 
         elif choice == "6":
-            file_path = input("Enter file path to load the order (default: 'order.pkl'): ") or "order.pkl"
+            file_path = input("Enter file name to load the order: ")
             loaded_order = Order.load_order(file_path)
             if loaded_order:
                 order = loaded_order
